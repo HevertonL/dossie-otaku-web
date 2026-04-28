@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import { setupSwagger } from './swagger.js';
 
 const app = express();
@@ -19,5 +20,6 @@ app.get('/', (req, res) => {
 
 // Nossas Rotas da Aplicação
 app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
 
 export default app;
