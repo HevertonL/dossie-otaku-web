@@ -12,6 +12,15 @@ const options = {
     servers: [
       { url: 'http://localhost:3000', description: 'Servidor Local' },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
   // Diz ao Swagger onde procurar as anotações das rotas
   apis: ['./src/routes/*.js'], 
