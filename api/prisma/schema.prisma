@@ -16,5 +16,23 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  dossiers  Dossier[]
+
   @@map("users")
+}
+
+model Dossier {
+  id         String   @id @default(uuid())
+  userId     String
+  animeId    Int
+  rating     Int      // Nota de 1 a 5
+  text       String   // Renomeado de 'review' para 'text'
+  hasSpoiler Boolean  @default(false) // Novo campo exigido na US
+  status     String?  // Mantido como opcional
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@map("dossiers")
 }

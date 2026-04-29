@@ -3,6 +3,7 @@ import cors from 'cors';
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import animeRoutes from './routes/animeRoutes.js';
+import dossierRoutes from './routes/dossierRoutes.js';
 import { setupSwagger } from './swagger.js';
 
 const app = express();
@@ -23,5 +24,6 @@ app.get('/', (req, res) => {
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/animes', animeRoutes);
+app.use('/dossiers', dossierRoutes);
 
 export default app;
