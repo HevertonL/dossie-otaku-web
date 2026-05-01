@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
+import Home from './pages/Home';
 
 function App() {
   return (
@@ -11,7 +12,7 @@ function App() {
         {/* Container limpo para as rotas, sem o fundo cinza duplicado */}
         <main className="w-full max-w-4xl p-4">
           <Routes>
-            <Route path="/" element={<h2 className="text-xl text-center">📺 Vitrine de Animes (Home)</h2>} />
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
             <Route path="/anime/:id" element={<h2 className="text-xl text-center">📂 Detalhes do Anime e Dossiês</h2>} />
