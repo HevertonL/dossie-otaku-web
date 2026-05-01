@@ -1,20 +1,20 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Cadastro from './pages/Cadastro';
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-center">
+      {/* Wrapper principal: tela inteira escura */}
+      <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center pt-10">
         
-        <h1 className="text-4xl font-bold text-blue-500 mb-8">
-          Dossiê Otaku
-        </h1>
-
-        <main className="p-8 bg-slate-800 rounded-lg shadow-lg border border-slate-700">
+        {/* Container limpo para as rotas, sem o fundo cinza duplicado */}
+        <main className="w-full max-w-4xl p-4">
           <Routes>
-            <Route path="/" element={<h2 className="text-xl">📺 Vitrine de Animes (Home)</h2>} />
-            <Route path="/login" element={<h2 className="text-xl">🔑 Página de Login</h2>} />
-            <Route path="/cadastro" element={<h2 className="text-xl">📝 Página de Cadastro</h2>} />
-            <Route path="/anime/:id" element={<h2 className="text-xl">📂 Detalhes do Anime e Dossiês</h2>} />
+            <Route path="/" element={<h2 className="text-xl text-center">📺 Vitrine de Animes (Home)</h2>} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/anime/:id" element={<h2 className="text-xl text-center">📂 Detalhes do Anime e Dossiês</h2>} />
           </Routes>
         </main>
 
