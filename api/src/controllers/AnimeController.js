@@ -6,7 +6,7 @@ class AnimeController {
       const { q } = req.query; // Pega o que o usuário digitou na busca (ex: ?q=naruto)
 
       if (!q) {
-        return res.status(400).json({ error: 'O termo de busca (q) é obrigatório.' });
+        return res.status(400).json({ error: 'O termo de busca é obrigatório.' });
       }
 
       // Faz a requisição para a Jikan API (limitando a 10 resultados para ser rápido)
