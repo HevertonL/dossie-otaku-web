@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../services/api.js';
 import bgImg from '../assets/fundo.png';
-import logoImg from '../assets/logo.png';
 
 export default function Cadastro() {
 
@@ -58,8 +57,6 @@ export default function Cadastro() {
       style={{ backgroundImage: `url(${bgImg})` }}
     >
       <div className="z-10 w-full max-w-md bg-black/70 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/10 flex flex-col gap-5">
-
-        <img src={logoImg} alt="Dossiê Otaku Logo" className="w-36 mx-auto drop-shadow-2xl mb-2" />
 
         <div className="text-center">
           <h2 className="text-2xl font-bold text-white">Criar Nova Conta</h2>

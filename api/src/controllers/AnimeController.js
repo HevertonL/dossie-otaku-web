@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 class AnimeController {
   async search(req, res) {
     try {
@@ -68,6 +70,39 @@ class AnimeController {
       return res.status(500).json({ error: 'Erro interno no servidor ao buscar detalhes.' });
     }
   }
+
+
+async getTopAnimes(req, res) {
+  try {
+    console.log("📡 Buscando destaques na Jikan...");
+    const response = await axios.get('https://api.jikan.moe/v4/top/anime');
+    
+    // Verificamos se a resposta tem dados antes de mapear
+    if (!response.data || !response.data.data) {
+      throw new Error("Formato de resposta inválido da Jikan");
+    }
+
+    const animes = response.data.data.map(anime => ({
+      id: anime.mal_id,
+      title: anime.title,
+      // Usamos o operador ?. (Optional Chaining) para não quebrar se faltar imagem
+      imageUrl: anime.images?.jpg?.large_image_url || 'https://via.placeholder.com/300x400',
+      score: anime.score || 0
+    }));
+
+    console.log("✅ Destaques mapeados com sucesso!");
+    return res.json(animes);
+
+  } catch (error) {
+    // Esse log no terminal do VS Code vai te dizer EXATAMENTE o que deu erro 500
+    console.error("❌ Erro no Controller getTopAnimes:", error.message);
+    
+    return res.status(500).json({ 
+      error: "Erro interno ao buscar destaques",
+      details: error.message 
+    });
+  }
+};
 }
 
 export default new AnimeController();

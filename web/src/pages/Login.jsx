@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { api } from '../services/api.js';
 import bgImg from '../assets/fundo.png';
-import logoImg from '../assets/logo.png';
 
 export default function Login() {
   const navigate = useNavigate(); // Inicializando o hook para navegação programática
+  const location = useLocation(); // Inicializando o hook para obter a localização atual
+
+const from = location.state?.from || '/'; // Rota para redirecionar após login (padrão é Home)
+
   // Criação dos estados para armazenar o que o usuário digita
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -26,10 +29,11 @@ export default function Login() {
       
       // CA: Salvar o Token JWT no LocalStorage
       const token = response.data.token; // Confirme se o seu backend devolve como 'token'
-      localStorage.setItem('@dossieOtaku:token', token); 
+      localStorage.setItem('token', token); 
+      localStorage.setItem('user', JSON.stringify(response.data.user)); // Salva os dados do usuário também, se necessário
       
       // CA: Redirecionar para a Home
-      navigate('/');
+      navigate(from, { replace: true }); // Redireciona para a rota de origem ou Home
       
     } catch (error) {
       console.error("Erro no login:", error);
@@ -43,8 +47,6 @@ export default function Login() {
       style={{ backgroundImage: `url(${bgImg})` }}
     >
       <div className="z-10 w-full max-w-sm bg-black/70 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/10 flex flex-col gap-6">
-
-        <img src={logoImg} alt="Dossiê Otaku Logo" className="w-48 mx-auto drop-shadow-2xl" />
 
         {/*Troca da tag form para escutar o onSubmit */}
         <form onSubmit={handleLogin} className="flex flex-col gap-4 mt-2">

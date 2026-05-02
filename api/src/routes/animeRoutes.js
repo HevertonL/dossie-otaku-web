@@ -46,6 +46,7 @@ const router = Router();
  */
 
 router.get('/search', AnimeController.search);
+router.get('/top', AnimeController.getTopAnimes);
 router.get('/:id', AnimeController.getById);
 
 export default router;
