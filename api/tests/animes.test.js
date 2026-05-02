@@ -74,6 +74,7 @@ describe('GET /animes/search - Validação de Parâmetros', () => {
   describe('GET /animes/:id - Detalhes do Anime', () => {
     
     it('Deve retornar 200 e os detalhes do anime validando o JSON Schema', async () => {
+      await sleep(1500);
       // Usando o ID 20 (Naruto) que é garantido de existir na Jikan API
       const validId = 20; 
       

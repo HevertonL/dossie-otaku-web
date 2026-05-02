@@ -1,6 +1,7 @@
 import prisma from '../../src/services/prisma.js';
 import bcrypt from 'bcryptjs';
 
+
 // Helper 1 (Para Testes de Login): Só cria se NÃO existir
 export async function ensureUserExists(name, email, password) {
   const existingUser = await prisma.user.findUnique({
@@ -22,5 +23,14 @@ export async function ensureUserExists(name, email, password) {
 export async function ensureUserDeleted(email) {
   await prisma.user.deleteMany({
     where: { email }
+  });
+}
+
+export async function ensureDossierDeletedByAnimeId(animeId) {
+  // Deleta todos os dossiês atrelados a esse ID de anime na base de testes
+  await prisma.dossier.deleteMany({
+    where: {
+      animeId: animeId
+    }
   });
 }
