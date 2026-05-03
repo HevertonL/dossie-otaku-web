@@ -22,10 +22,14 @@ jobs:
       - name: ⚙️ Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: 📦 Instalar dependências da API
         run: npm ci --legacy-peer-deps
+
+        # Gera o Prisma Client antes de testar
+      - name: 🗄️ Gerar Prisma Client
+        run: npx prisma generate
 
       - name: 🔍 Executar testes da API
         run: npm run test:api
@@ -41,12 +45,13 @@ jobs:
       - name: ⚙️ Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: 🚀 Iniciar API em Background
         working-directory: ./api
         run: |
           npm ci --legacy-peer-deps
+          npx prisma generate
           npm start &
 
       - name: 🌐 Executar Cypress E2E
