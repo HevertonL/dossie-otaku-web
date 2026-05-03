@@ -4,36 +4,30 @@ import { api } from '../services/api.js';
 import bgImg from '../assets/fundo.png';
 
 export default function Login() {
-  const navigate = useNavigate(); // Inicializando o hook para navegação programática
-  const location = useLocation(); // Inicializando o hook para obter a localização atual
+  const navigate = useNavigate();
+  const location = useLocation();
 
-const from = location.state?.from || '/'; // Rota para redirecionar após login (padrão é Home)
+  const from = location.state?.from || '/';
 
-  // Criação dos estados para armazenar o que o usuário digita
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  // Função disparada quando o formulário é enviado
   const handleLogin = async (e) => {
-    e.preventDefault(); // Impede o recarregamento da página (comportamento padrão do HTML)
+    e.preventDefault();
     
-    // "Pacote" que vai para o seu Backend
     const payload = {
       email: email,
       password: senha
     };
 
     try {
-      // CA: Integrar formulário de login com a API
       const response = await api.post('/auth/login', payload);
       
-      // CA: Salvar o Token JWT no LocalStorage
-      const token = response.data.token; // Confirme se o seu backend devolve como 'token'
+      const token = response.data.token;
       localStorage.setItem('token', token); 
-      localStorage.setItem('user', JSON.stringify(response.data.user)); // Salva os dados do usuário também, se necessário
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       
-      // CA: Redirecionar para a Home
-      navigate(from, { replace: true }); // Redireciona para a rota de origem ou Home
+      navigate(from, { replace: true });
       
     } catch (error) {
       console.error("Erro no login:", error);
@@ -48,25 +42,27 @@ const from = location.state?.from || '/'; // Rota para redirecionar após login 
     >
       <div className="z-10 w-full max-w-sm bg-black/70 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/10 flex flex-col gap-6">
 
-        {/*Troca da tag form para escutar o onSubmit */}
-        <form onSubmit={handleLogin} className="flex flex-col gap-4 mt-2">
+        {/* Adicionado data-cy no formulário */}
+        <form onSubmit={handleLogin} data-cy="login-form" className="flex flex-col gap-4 mt-2">
           <div>
             <input
               type="email"
+              data-cy="login-email-input" // Mapeamento para o Cypress
               placeholder="✉️ Email"
-              value={email} // Ligamos o input ao estado
-              onChange={(e) => setEmail(e.target.value)} // Atualizamos o estado a cada letra digitada
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:border-blue-500 focus:bg-white/20 transition-all"
-              required // Validação básica do HTML
+              required
             />
           </div>
 
           <div>
             <input
               type="password"
+              data-cy="login-password-input" // Mapeamento para o Cypress
               placeholder="🔒 Senha"
-              value={senha} // Ligamos o input ao estado
-              onChange={(e) => setSenha(e.target.value)} // Atualizamos o estado a cada letra digitada
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
               className="w-full p-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:border-blue-500 focus:bg-white/20 transition-all"
               required
             />
@@ -78,13 +74,14 @@ const from = location.state?.from || '/'; // Rota para redirecionar após login 
 
           <button
             type="submit"
+            data-cy="login-submit-button" // Mapeamento para o Cypress
             className="mt-2 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-2xl transition-colors shadow-lg shadow-blue-600/30"
           >
             Entrar
           </button>
 
           <p className="text-center text-gray-300 mt-2 text-sm">
-            Não tem uma conta? <Link to="/cadastro" className="text-white font-semibold hover:underline">Cadastre-se</Link>
+            Não tem uma conta? <Link to="/cadastro" data-cy="login-register-link" className="text-white font-semibold hover:underline">Cadastre-se</Link>
           </p>
         </form>
       </div>
