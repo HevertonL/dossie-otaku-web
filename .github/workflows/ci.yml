@@ -58,6 +58,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: ./web
+          install-command: npm install
           build: npm run build
           start: npm run preview
           # Aguarda a API (3000) e o Front-end de Produção (4173) estarem vivos
