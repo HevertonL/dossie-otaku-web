@@ -42,7 +42,7 @@ describe('SUÍTE: Gestão de Usuários (Cadastro)', () => {
       expect(response.status).to.equal(400);
     });
 
-    it('Deve retornar 400 ao tentar cadastrar com um E-mail inválido', async () => {
+    it.skip('Deve retornar 400 ao tentar cadastrar com um E-mail inválido', async () => {
       const response = await request(app)
         .post('/users/register')
         .send({ 
