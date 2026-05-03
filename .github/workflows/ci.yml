@@ -13,7 +13,7 @@ jobs:
     # Diz ao GitHub para rodar todos os comandos deste Job dentro da pasta 'api'
     defaults:
       run:
-        working-directory: ./api 
+        working-directory: ./api
 
     steps:
       - name: 📥 Baixar o código
@@ -22,10 +22,10 @@ jobs:
       - name: ⚙️ Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: 📦 Instalar dependências da API
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: 🔍 Executar testes da API
         run: npm test
@@ -41,7 +41,7 @@ jobs:
       - name: ⚙️ Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       # NOTA TÉCNICA: Se os seus testes do Cypress precisarem da API real rodando 
       # para fazer login, descomente o bloco abaixo para ligar o servidor da API em background!
@@ -49,7 +49,7 @@ jobs:
       - name: 🚀 Iniciar API em Background
         working-directory: ./api
         run: |
-          npm ci
+          npm ci --legacy-peer-deps
           npm start &
 
       - name: 🌐 Executar Cypress E2E
@@ -58,4 +58,4 @@ jobs:
           working-directory: ./web
           build: npm run build
           start: npm run dev
-          wait-on: 'http://localhost:5173'
+          wait-on: "http://localhost:5173"
