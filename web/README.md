@@ -1,16 +1,69 @@
-# React + Vite
+# 🎨 Frontend — Dossiê Otaku
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface web da aplicação, responsável pela experiência do usuário.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠️ Tecnologias
 
-## React Compiler
+- React
+- Vite
+- Axios
+- Cypress
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🚀 Como rodar
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+cd web
+npm install
+npm run dev
+```
+
+---
+
+## 🔐 Variáveis de Ambiente
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+---
+
+## 🧪 Testes E2E
+
+```bash
+npx cypress open
+```
+
+---
+
+## 🖥️ Telas principais
+
+### 🔍 Home (Busca)
+
+<img src="https://github.com/user-attachments/assets/746f88b9-f2b3-44f2-958a-1e192e22dc8b" width="800"/>
+
+---
+
+### 🔐 Login
+
+<img src="https://github.com/user-attachments/assets/99bd731b-7f46-4bba-aec9-8484fe4633fb" width="800"/>
+
+---
+
+### 📝 Cadastro
+
+<img src="https://github.com/user-attachments/assets/8bd8e382-3158-4a10-95f7-95a48cdc9342" width="800"/>
+
+---
+
+### ✍️ Detalhe do Anime e Criação de Dossiê
+
+<img src="https://github.com/user-attachments/assets/b3eb10e1-0714-40be-9b9d-e071fdd5e033" width="800"/>
+
+
+
+
+
