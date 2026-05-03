@@ -52,7 +52,10 @@ jobs:
         run: |
           npm ci --legacy-peer-deps
           npx prisma generate
-          npm start &
+          npm start > log-da-api.txt 2>&1 &
+          sleep 5
+          cat log-da-api.txt
+          
 
       - name: 🌐 Executar Cypress E2E
         uses: cypress-io/github-action@v6
