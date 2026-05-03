@@ -9,25 +9,23 @@ export default function AnimeDetails() {
   const [dossiers, setDossiers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Estados do Formulário
   const [nota, setNota] = useState(5);
   const [texto, setTexto] = useState('');
   const [spoiler, setSpoiler] = useState(false);
   const [statusView, setStatusView] = useState('Assistindo');
 
   const token = localStorage.getItem('token');
+  const userLogado = JSON.parse(localStorage.getItem('user'));
   const isAuthenticated = !!token;
 
   useEffect(() => {
     const fetchDados = async () => {
       try {
-        // Dispara as duas requisições paralelamente para ganhar performance
         const [animeResponse, dossiersResponse] = await Promise.all([
-          api.get(`/animes/${id}`), // CA: GET /animes/:id
-          api.get(`/dossiers/anime/${id}`) // A rota do seu print: GET /dossiers/anime/:animeId
+          api.get(`/animes/${id}`),
+          api.get(`/dossiers/anime/${id}`)
         ]);
 
-        // Dependendo de como seu backend retorna, talvez precise ajustar para animeResponse.data.data (se for Jikan direto)
         setAnime(animeResponse.data);
         setDossiers(dossiersResponse.data);
       } catch (error) {
@@ -44,15 +42,14 @@ export default function AnimeDetails() {
     e.preventDefault();
 
     try {
-      // A rota do seu print: POST /dossiers com authMiddleware
       const response = await api.post(
         '/dossiers',
         {
-          animeId: Number(id),  // Convertendo a string da URL para número
-          rating: Number(nota), // Mapeando 'nota' para 'rating'
-          text: texto,          // Mapeando 'texto' para 'text'
-          hasSpoiler: spoiler,  // Mapeando 'spoiler' para 'hasSpoiler'
-          status: statusView    // Mapeando 'statusView' para 'status'
+          animeId: Number(id),
+          rating: Number(nota),
+          text: texto,
+          hasSpoiler: spoiler,
+          status: statusView
         },
         {
           headers: {
@@ -61,41 +58,36 @@ export default function AnimeDetails() {
         }
       );
 
-      // CA: Atualizar a lista de dossiês em tempo real
-      // Adicionamos o novo dossiê retornado pela API no topo da lista atual
-      setDossiers([response.data, ...dossiers]);
+      // Busca a lista atualizada do banco, já perfeitamente populada
+      const dossiersResponse = await api.get(`/dossiers/anime/${id}`);
+      setDossiers(dossiersResponse.data);
 
-      // Limpa os campos após o sucesso
       setTexto('');
       setNota(5);
       setSpoiler(false);
 
     } catch (error) {
       console.error("Erro ao enviar dossiê:", error);
-      
-      // O Axios guarda a resposta do backend dentro de error.response.data
-      // Vamos tentar pegar a chave 'error' ou 'message' que o seu Node.js retorna
-      const mensagemDoBackend = error.response?.data?.error 
-                             || error.response?.data?.message 
-                             || "Erro desconhecido ao tentar publicar.";
 
-      // Agora o alerta vai mostrar exatamente o que o backend reclamou!
+      const mensagemDoBackend = error.response?.data?.error
+        || error.response?.data?.message
+        || "Erro desconhecido ao tentar publicar.";
+
       alert(`Atenção: ${mensagemDoBackend}`);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col justify-center items-center gap-4">
+      <div data-cy="anime-details-loading" className="min-h-screen bg-[#0a0a0a] text-white flex flex-col justify-center items-center gap-4">
         <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         <p>Abrindo os arquivos...</p>
       </div>
     );
   }
 
-  // Fallback caso a API de animes falhe
   if (!anime) {
-    return <div className="min-h-screen bg-[#0a0a0a] text-white flex justify-center items-center">Anime não encontrado.</div>;
+    return <div data-cy="anime-not-found" className="min-h-screen bg-[#0a0a0a] text-white flex justify-center items-center">Anime não encontrado.</div>;
   }
 
   return (
@@ -111,9 +103,8 @@ export default function AnimeDetails() {
               className="w-full h-full object-cover"
             />
           </div>
-          <h1 className="text-2xl font-bold">{anime.title}</h1>
+          <h1 data-cy="anime-title" className="text-2xl font-bold">{anime.title}</h1>
           <div className="flex flex-wrap gap-2">
-            {/* Renderização condicional de gêneros dependendo da estrutura do backend */}
             {anime.genres && anime.genres.map(genre => (
               <span key={genre.mal_id || genre.id || genre} className="bg-blue-600/20 text-blue-400 px-2 py-1 rounded text-sm">
                 {genre.name || genre}
@@ -134,28 +125,28 @@ export default function AnimeDetails() {
             <h2 className="text-xl font-bold mb-4 border-l-4 border-blue-500 pl-3">Publicar Dossiê</h2>
 
             {isAuthenticated ? (
-              <form onSubmit={handleSubmitDossier} className="flex flex-col gap-4">
+              <form data-cy="dossier-form" onSubmit={handleSubmitDossier} className="flex flex-col gap-4">
                 <div className="flex gap-4">
                   <div className="flex-1">
-  <label className="block text-sm text-gray-400 mb-2">Nota</label>
-  <div className="flex gap-2 items-center h-10.5"> {/* h-[42px] para alinhar com a altura do select de Status */}
-    {[1, 2, 3, 4, 5].map((star) => (
-      <button
-        key={star}
-        type="button" // Essencial ser 'button' para não submeter o formulário ao clicar
-        onClick={() => setNota(star)}
-        className={`text-3xl transition-colors focus:outline-none drop-shadow-md hover:scale-110 active:scale-95 ${
-          star <= nota ? 'text-yellow-400' : 'text-gray-600 hover:text-yellow-500/50'
-        }`}
-      >
-        ★
-      </button>
-    ))}
-  </div>
-</div>
+                    <label className="block text-sm text-gray-400 mb-2">Nota</label>
+                    <div className="flex gap-2 items-center h-10.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          data-cy={`star-rating-${star}`} // <-- Mapeamento dinâmico para o Cypress clicar na nota exata
+                          onClick={() => setNota(star)}
+                          className={`text-3xl transition-colors focus:outline-none drop-shadow-md hover:scale-110 active:scale-95 ${star <= nota ? 'text-yellow-400' : 'text-gray-600 hover:text-yellow-500/50'
+                            }`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <div className="flex-1">
                     <label className="block text-sm text-gray-400 mb-1">Status</label>
-                    <select value={statusView} onChange={e => setStatusView(e.target.value)} className="w-full p-2 rounded bg-black/50 border border-white/20 text-white focus:border-blue-500 outline-none">
+                    <select data-cy="dossier-status-select" value={statusView} onChange={e => setStatusView(e.target.value)} className="w-full p-2 rounded bg-black/50 border border-white/20 text-white focus:border-blue-500 outline-none">
                       <option value="Assistindo">Assistindo</option>
                       <option value="Finalizado">Finalizado</option>
                       <option value="Dropado">Dropado</option>
@@ -165,15 +156,15 @@ export default function AnimeDetails() {
 
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Sua Análise</label>
-                  <textarea rows="4" value={texto} onChange={e => setTexto(e.target.value)} className="w-full p-2 rounded bg-black/50 border border-white/20 text-white focus:border-blue-500 outline-none" placeholder="O que você achou desta obra?" required></textarea>
+                  <textarea data-cy="dossier-review-textarea" rows="4" value={texto} onChange={e => setTexto(e.target.value)} className="w-full p-2 rounded bg-black/50 border border-white/20 text-white focus:border-blue-500 outline-none" placeholder="O que você achou desta obra?" required></textarea>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" checked={spoiler} onChange={e => setSpoiler(e.target.checked)} className="w-4 h-4 accent-blue-500" />
+                    <input data-cy="dossier-spoiler-checkbox" type="checkbox" checked={spoiler} onChange={e => setSpoiler(e.target.checked)} className="w-4 h-4 accent-blue-500" />
                     <span className="text-sm text-gray-300">Contém Spoiler</span>
                   </label>
-                  <button type="submit" className="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded font-bold transition-colors shadow-lg">
+                  <button data-cy="dossier-submit-button" type="submit" className="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded font-bold transition-colors shadow-lg">
                     Publicar
                   </button>
                 </div>
@@ -183,7 +174,8 @@ export default function AnimeDetails() {
                 <p className="text-gray-400 mb-2">Você precisa estar logado para abrir um dossiê.</p>
                 <Link
                   to="/login"
-                  state={{ from: location.pathname }} //Enviando a origem da navegação
+                  data-cy="dossier-login-link"
+                  state={{ from: location.pathname }}
                   className="text-blue-400 hover:text-blue-300 underline font-semibold"
                 >
                   Fazer Login
@@ -195,28 +187,24 @@ export default function AnimeDetails() {
           {/* LISTA DE REVIEWS DA COMUNIDADE */}
           <div>
             <h2 className="text-xl font-bold mb-4 border-l-4 border-blue-500 pl-3">Dossiês da Comunidade</h2>
-            <div className="flex flex-col gap-4">
+            <div data-cy="dossier-list" className="flex flex-col gap-4">
               {dossiers.length > 0 ? (
                 dossiers.map((dossier) => (
-                  <div key={dossier.id || dossier._id} className="bg-white/5 p-4 rounded-lg border border-white/10 transition-colors hover:border-white/20">
+                  <div key={dossier.id || dossier._id} data-cy="dossier-card" className="bg-white/5 p-4 rounded-lg border border-white/10 transition-colors hover:border-white/20">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-blue-400">{dossier.user?.name || 'Usuário'}</span>
-                      {/* Corrigido de dossier.nota para dossier.rating */}
-                      <span className="text-yellow-400 font-bold">★ {dossier.rating}</span> 
+                      <span className="text-yellow-400 font-bold">★ {dossier.rating}</span>
                     </div>
 
-                    {/* Corrigido de dossier.spoiler para dossier.hasSpoiler */}
                     {dossier.hasSpoiler && (
                       <div className="mb-2 inline-block bg-red-600/20 border border-red-500/30 text-red-400 text-xs px-2 py-1 rounded font-bold uppercase tracking-wider">
                         Alerta de Spoiler
                       </div>
                     )}
 
-                    {/* Corrigido de dossier.texto para dossier.text */}
                     <p className="text-gray-300 text-sm whitespace-pre-line">{dossier.text}</p>
 
                     <div className="mt-3 pt-3 border-t border-white/5 text-xs text-gray-500 flex gap-2">
-                      {/* Corrigido de dossier.statusView para dossier.status */}
                       <span>Status: {dossier.status}</span>
                       <span>•</span>
                       <span>{new Date(dossier.createdAt).toLocaleDateString('pt-BR')}</span>
@@ -224,7 +212,7 @@ export default function AnimeDetails() {
                   </div>
                 ))
               ) : (
-                <p className="text-gray-500 italic">Nenhum dossiê publicado para esta obra ainda. Seja o primeiro!</p>
+                <p data-cy="dossier-empty-message" className="text-gray-500 italic">Nenhum dossiê publicado para esta obra ainda. Seja o primeiro!</p>
               )}
             </div>
           </div>

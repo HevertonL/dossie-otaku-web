@@ -1,0 +1,112 @@
+name: Pipeline CI - Qualidade e Automação
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  testes-api:
+    name: 🟢 Testes de Back-end (Mocha)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api 
+
+    # --- INÍCIO DA INFRAESTRUTURA DE BANCO DE DADOS ---
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: dossie_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: "postgresql://admin:admin@localhost:5432/dossie_db?schema=public"
+      JWT_SECRET: "chave-secreta-para-testes"
+      PORT: 3000
+    # --- FIM DA INFRAESTRUTURA ---
+
+    steps:
+      - name: 📥 Baixar o código
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 📦 Instalar dependências da API
+        run: npm ci --legacy-peer-deps
+
+      # ADICIONAMOS O DB PUSH AQUI PARA CRIAR AS TABELAS
+      - name: 🗄️ Gerar Prisma Client e Banco
+        run: |
+          npx prisma generate
+          npx prisma db push
+
+      - name: 🔍 Executar testes da API
+        run: npm run test:api
+
+  testes-web:
+    name: 🔵 Testes de Front-end (Cypress)
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: dossie_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: "postgresql://admin:admin@localhost:5432/dossie_db?schema=public"
+      JWT_SECRET: "chave-secreta-para-testes"
+      PORT: 3000
+
+    steps:
+      - name: 📥 Baixar o código
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 🚀 Iniciar API em Background
+        working-directory: ./api
+        run: |
+          npm ci --legacy-peer-deps
+          npx prisma generate
+          npx prisma db push
+          npm start > log-da-api.txt 2>&1 &
+          sleep 5
+          cat log-da-api.txt
+          
+
+      - name: 🌐 Executar Cypress E2E
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: ./web
+          install-command: npm install
+          build: npm run build
+          start: npm run preview
+          # Aguarda a API (3000) e o Front-end de Produção (4173) estarem vivos
+          wait-on: "http://localhost:3000, http://localhost:4173"

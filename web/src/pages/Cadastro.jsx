@@ -5,31 +5,26 @@ import bgImg from '../assets/fundo.png';
 
 export default function Cadastro() {
 
-  const navigate = useNavigate(); // Inicializando o hook para navegação programática
-  // Estados para todos os campos do formulário
+  const navigate = useNavigate();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [termos, setTermos] = useState(false);
 
-  // Função disparada ao submeter
   const handleCadastro = async (e) => {
     e.preventDefault();
 
-    // Validação se as senhas coincidem
     if (senha !== confirmarSenha) {
       alert("Ops! As senhas não coincidem. Tente novamente.");
-      return; // Para a execução aqui e não envia pra API
+      return; 
     }
 
-    // Validação se os termos foram aceitos
     if (!termos) {
       alert("Você precisa aceitar os Termos de Uso para criar uma conta.");
       return;
     }
 
-    // "Pacote" pronto para a API
     const payload = {
       name: nome,
       email: email,
@@ -37,11 +32,10 @@ export default function Cadastro() {
     };
 
     try {
-      // CA: Integrar formulário de cadastro com a API
       await api.post('/users/register', payload);
 
       alert("Conta ninja criada com sucesso!");
-      navigate('/login'); // Manda o cara pro login
+      navigate('/login'); 
 
     } catch (error) {
       console.error("Erro ao cadastrar:", error);
@@ -63,11 +57,12 @@ export default function Cadastro() {
           <p className="text-gray-400 text-sm mt-1">Junte-se ao esquadrão Dossiê Otaku</p>
         </div>
 
-        {/* Ligar o onSubmit na tag form */}
-        <form onSubmit={handleCadastro} className="flex flex-col gap-4">
+        {/* Formulario com data-cy */}
+        <form onSubmit={handleCadastro} data-cy="register-form" className="flex flex-col gap-4">
           <div>
             <input
               type="text"
+              data-cy="register-name-input"
               placeholder="👤 Seu nome ninja"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
@@ -79,6 +74,7 @@ export default function Cadastro() {
           <div>
             <input
               type="email"
+              data-cy="register-email-input"
               placeholder="✉️ Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -90,6 +86,7 @@ export default function Cadastro() {
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="password"
+              data-cy="register-password-input"
               placeholder="🔒 Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
@@ -99,10 +96,10 @@ export default function Cadastro() {
             
             <input
               type="password"
+              data-cy="register-confirm-password-input"
               placeholder="🔁 Confirmar"
               value={confirmarSenha}
               onChange={(e) => setConfirmarSenha(e.target.value)}
-              // classe que muda a borda para vermelho se as senhas não coincidem, verde se coincidem, e cinza padrão
               className={`w-full p-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border transition-all focus:outline-none 
                 ${confirmarSenha.length > 0 && senha !== confirmarSenha 
                   ? 'border-red-500 focus:border-red-500' 
@@ -114,9 +111,8 @@ export default function Cadastro() {
             />
           </div>
 
-          {/* Adicionando mensagem de erro */}
           {confirmarSenha.length > 0 && senha !== confirmarSenha && (
-            <span className="text-red-500 text-xs -mt-2 ml-1">
+            <span data-cy="register-password-error" className="text-red-500 text-xs -mt-2 ml-1">
               ⚠️ As senhas ainda não coincidem.
             </span>
           )}
@@ -125,8 +121,9 @@ export default function Cadastro() {
             <input
               type="checkbox"
               id="termos"
+              data-cy="register-terms-checkbox"
               checked={termos}
-              onChange={(e) => setTermos(e.target.checked)} // Checkbox usa .checked no lugar de .value
+              onChange={(e) => setTermos(e.target.checked)} 
               className="w-4 h-4 accent-green-500 cursor-pointer"
             />
             <label htmlFor="termos" className="text-sm text-gray-300 cursor-pointer">
@@ -136,6 +133,7 @@ export default function Cadastro() {
 
           <button
             type="submit"
+            data-cy="register-submit-button"
             disabled={!formularioValido}
             className={`mt-2 w-full font-bold py-3 px-4 rounded-2xl transition-colors shadow-lg 
     ${formularioValido
@@ -147,7 +145,7 @@ export default function Cadastro() {
           </button>
 
           <p className="text-center text-gray-300 mt-2 text-sm">
-            Já é um membro? <Link to="/login" className="text-green-400 font-semibold hover:underline">Faça login</Link>
+            Já é um membro? <Link to="/login" data-cy="register-login-link" className="text-green-400 font-semibold hover:underline">Faça login</Link>
           </p>
         </form>
       </div>

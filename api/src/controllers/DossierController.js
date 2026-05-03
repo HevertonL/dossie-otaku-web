@@ -8,7 +8,7 @@ class DossierController {
 
 
       // Validação de campos obrigatórios do CA
-      if (!animeId || !rating || !text || hasSpoiler === undefined) {
+      if (!animeId || rating === undefined || !text || hasSpoiler === undefined) {
         return res.status(400).json({ error: 'Os campos animeId, rating, text e hasSpoiler são obrigatórios.' });
       }
 
