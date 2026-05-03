@@ -10,10 +10,31 @@ jobs:
   testes-api:
     name: 🟢 Testes de Back-end (Mocha)
     runs-on: ubuntu-latest
-    # Diz ao GitHub para rodar todos os comandos deste Job dentro da pasta 'api'
     defaults:
       run:
-        working-directory: ./api
+        working-directory: ./api 
+
+    # --- INÍCIO DA INFRAESTRUTURA DE BANCO DE DADOS ---
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: dossie_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: "postgresql://admin:admin@localhost:5432/dossie_db?schema=public"
+      JWT_SECRET: "chave-secreta-para-testes"
+      PORT: 3000
+    # --- FIM DA INFRAESTRUTURA ---
 
     steps:
       - name: 📥 Baixar o código
@@ -22,14 +43,16 @@ jobs:
       - name: ⚙️ Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: 📦 Instalar dependências da API
         run: npm ci --legacy-peer-deps
 
-        # Gera o Prisma Client antes de testar
-      - name: 🗄️ Gerar Prisma Client
-        run: npx prisma generate
+      # ADICIONAMOS O DB PUSH AQUI PARA CRIAR AS TABELAS
+      - name: 🗄️ Gerar Prisma Client e Banco
+        run: |
+          npx prisma generate
+          npx prisma db push
 
       - name: 🔍 Executar testes da API
         run: npm run test:api
@@ -37,6 +60,26 @@ jobs:
   testes-web:
     name: 🔵 Testes de Front-end (Cypress)
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: dossie_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: "postgresql://admin:admin@localhost:5432/dossie_db?schema=public"
+      JWT_SECRET: "chave-secreta-para-testes"
+      PORT: 3000
 
     steps:
       - name: 📥 Baixar o código
@@ -52,6 +95,7 @@ jobs:
         run: |
           npm ci --legacy-peer-deps
           npx prisma generate
+          npx prisma db push
           npm start > log-da-api.txt 2>&1 &
           sleep 5
           cat log-da-api.txt
