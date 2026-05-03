@@ -170,6 +170,10 @@ Pipeline com GitHub Actions:
 - Build do frontend
 - Valida integração
 
+
+<img width="1902" height="956" alt="image" src="https://github.com/user-attachments/assets/0b18e063-bcb9-4db2-9eeb-51df7e82725b" />
+
+
 ---
 
 ## 📂 Estrutura do Projeto
