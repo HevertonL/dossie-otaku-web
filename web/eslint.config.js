@@ -15,7 +15,14 @@ export default defineConfig([
     ],
     languageOptions: {
       globals: globals.browser,
-      parserOptions: { ecmaFeatures: { jsx: true } },
+      cy: 'readonly',
+      Cypress: 'readonly',
+      describe: 'readonly',
+      it: 'readonly',
+      expect: 'readonly',
+      beforeEach: 'readonly',
+      afterEach: 'readonly'
     },
+    parserOptions: { ecmaFeatures: { jsx: true } },
   },
 ])

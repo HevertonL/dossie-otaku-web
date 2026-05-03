@@ -6,17 +6,15 @@ import { api } from '../services/api.js';
 export default function Home() {
   const [busca, setBusca] = useState('');
   const [animes, setAnimes] = useState([]);
-  const [loading, setLoading] = useState(true); // Começa como true para o carregamento inicial
+  const [loading, setLoading] = useState(true);
   const [buscaAtiva, setBuscaAtiva] = useState('');
 
-  // Efeito para carregar os animes em destaque (Top Animes) ao iniciar
   useEffect(() => {
     const fetchDestaques = async () => {
       try {
         setLoading(true);
-        // Batendo na sua rota de destaques do backend
         const response = await api.get('/animes/top'); 
-        setAnimes(response.data.slice(0, 10)); // Exibimos os 10 primeiros
+        setAnimes(response.data.slice(0, 10)); 
       } catch (error) {
         console.error("Erro ao carregar destaques:", error);
       } finally {
@@ -52,7 +50,6 @@ export default function Home() {
         className="relative w-full h-[45vh] min-h-75 bg-cover bg-center bg-no-repeat flex items-center justify-center bg-gray-900"
         style={{ backgroundImage: `url(${bannerImg})` }}
       >
-        {/* Overlay escuro para destacar o texto sobre o banner */}
         <div className="absolute inset-0 bg-black/50"></div>
 
         <div className="relative z-10 w-full max-w-3xl px-4 flex flex-col items-center">
@@ -63,10 +60,11 @@ export default function Home() {
             Pesquise por animes, análises e descubra novos universos.
           </p>
 
-          <form onSubmit={handleSearch} className="w-full relative">
+          {/* Adicionado data-cy no form */}
+          <form onSubmit={handleSearch} data-cy="search-form" className="w-full relative">
             <input
               type="text"
-              data-testid="search-input"
+              data-cy="search-input" // Padronizado para data-cy
               placeholder="Ex: Hunter x Hunter, One Piece, Re:Zero..."
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
@@ -74,7 +72,7 @@ export default function Home() {
             />
             <button
               type="submit"
-              data-testid="search-button"
+              data-cy="search-submit-button" // Padronizado para data-cy
               disabled={loading}
               className={`absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-full transition-colors shadow-lg ${
                 loading ? 'bg-gray-500 cursor-wait' : 'bg-blue-600 hover:bg-blue-500'
@@ -96,13 +94,13 @@ export default function Home() {
 
         <div 
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6"
-          data-testid="anime-grid"
+          data-cy="anime-grid" // Padronizado para data-cy
         >
           
           {loading ? (
             // Skeletons de Loading
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
-              <div key={item} className="flex flex-col gap-2 animate-pulse">
+              <div key={item} data-cy="loading-skeleton" className="flex flex-col gap-2 animate-pulse">
                 <div className="w-full aspect-3/4 bg-white/5 rounded-xl border border-white/10"></div>
                 <div className="h-4 bg-white/10 rounded w-3/4 mt-2"></div>
                 <div className="h-3 bg-white/5 rounded w-1/2"></div>
@@ -113,7 +111,7 @@ export default function Home() {
               <Link 
                 to={`/anime/${anime.id}`} 
                 key={anime.id} 
-                data-testid={`anime-card-${anime.id}`}
+                data-cy={`anime-card-${anime.id}`} // Padronizado para data-cy
                 className="flex flex-col gap-2 group cursor-pointer transition-transform hover:-translate-y-2"
               >
                 <div className="w-full aspect-3/4 rounded-xl overflow-hidden border border-white/10 group-hover:border-blue-500 transition-colors shadow-lg relative bg-gray-800">
@@ -135,7 +133,7 @@ export default function Home() {
               </Link>
             ))
           ) : (
-            <div className="col-span-full text-center py-10 text-gray-400" data-testid="no-results">
+            <div className="col-span-full text-center py-10 text-gray-400" data-cy="empty-results">
               <p className="text-lg">Nenhum dossiê encontrado. Tente outro termo!</p>
             </div>
           )}
