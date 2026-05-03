@@ -15,6 +15,7 @@ export default function AnimeDetails() {
   const [statusView, setStatusView] = useState('Assistindo');
 
   const token = localStorage.getItem('token');
+  const userLogado = JSON.parse(localStorage.getItem('user'));
   const isAuthenticated = !!token;
 
   useEffect(() => {
@@ -57,7 +58,9 @@ export default function AnimeDetails() {
         }
       );
 
-      setDossiers([response.data, ...dossiers]);
+      // Busca a lista atualizada do banco, já perfeitamente populada
+      const dossiersResponse = await api.get(`/dossiers/anime/${id}`);
+      setDossiers(dossiersResponse.data);
 
       setTexto('');
       setNota(5);
@@ -65,10 +68,10 @@ export default function AnimeDetails() {
 
     } catch (error) {
       console.error("Erro ao enviar dossiê:", error);
-      
-      const mensagemDoBackend = error.response?.data?.error 
-                             || error.response?.data?.message 
-                             || "Erro desconhecido ao tentar publicar.";
+
+      const mensagemDoBackend = error.response?.data?.error
+        || error.response?.data?.message
+        || "Erro desconhecido ao tentar publicar.";
 
       alert(`Atenção: ${mensagemDoBackend}`);
     }
@@ -126,16 +129,15 @@ export default function AnimeDetails() {
                 <div className="flex gap-4">
                   <div className="flex-1">
                     <label className="block text-sm text-gray-400 mb-2">Nota</label>
-                    <div className="flex gap-2 items-center h-10.5"> 
+                    <div className="flex gap-2 items-center h-10.5">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
                           key={star}
-                          type="button" 
+                          type="button"
                           data-cy={`star-rating-${star}`} // <-- Mapeamento dinâmico para o Cypress clicar na nota exata
                           onClick={() => setNota(star)}
-                          className={`text-3xl transition-colors focus:outline-none drop-shadow-md hover:scale-110 active:scale-95 ${
-                            star <= nota ? 'text-yellow-400' : 'text-gray-600 hover:text-yellow-500/50'
-                          }`}
+                          className={`text-3xl transition-colors focus:outline-none drop-shadow-md hover:scale-110 active:scale-95 ${star <= nota ? 'text-yellow-400' : 'text-gray-600 hover:text-yellow-500/50'
+                            }`}
                         >
                           ★
                         </button>
@@ -173,7 +175,7 @@ export default function AnimeDetails() {
                 <Link
                   to="/login"
                   data-cy="dossier-login-link"
-                  state={{ from: location.pathname }} 
+                  state={{ from: location.pathname }}
                   className="text-blue-400 hover:text-blue-300 underline font-semibold"
                 >
                   Fazer Login
@@ -191,7 +193,7 @@ export default function AnimeDetails() {
                   <div key={dossier.id || dossier._id} data-cy="dossier-card" className="bg-white/5 p-4 rounded-lg border border-white/10 transition-colors hover:border-white/20">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-bold text-blue-400">{dossier.user?.name || 'Usuário'}</span>
-                      <span className="text-yellow-400 font-bold">★ {dossier.rating}</span> 
+                      <span className="text-yellow-400 font-bold">★ {dossier.rating}</span>
                     </div>
 
                     {dossier.hasSpoiler && (

@@ -7,7 +7,7 @@ describe('Fluxo de Autenticação (E2E)', () => {
     const nomeUsuario = 'Testador E2E'; // Variável para garantir que o nome cadastrado será o mesmo validado na tela
 
     // ==========================================
-    // FASE 1: CADASTRO
+    // CADASTRO
     // ==========================================
     cy.visit('/cadastro'); 
 
@@ -26,14 +26,14 @@ describe('Fluxo de Autenticação (E2E)', () => {
     cy.url().should('include', '/login');
 
     // ==========================================
-    // FASE 2: LOGIN
+    // LOGIN
     // ==========================================
     cy.get('[data-cy="login-email-input"]').type(emailUnico);
     cy.get('[data-cy="login-password-input"]').type(senha);
     cy.get('[data-cy="login-submit-button"]').click();
 
     // ==========================================
-    // FASE 3: VALIDAÇÃO BLINDADA (Autenticado)
+    // VALIDAÇÃO BLINDADA (Autenticado)
     // ==========================================
     cy.url().should('eq', Cypress.config().baseUrl + '/');
     
