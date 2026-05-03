@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe('Fluxo Principal: Busca e Publicação (E2E)', () => {
-  
+
   // Variáveis globais para o bloco de testes
   let emailUnico;
   const senha = 'SenhaForte123!';
@@ -11,34 +11,18 @@ describe('Fluxo Principal: Busca e Publicação (E2E)', () => {
   // Vamos usar ele para criar a nossa conta de testes no banco
   before(() => {
     emailUnico = `avaliador_${Date.now()}@dossie.com`;
-
-    cy.visit('/cadastro'); 
-    cy.get('[data-cy="register-name-input"]').type(nomeUsuario);
-    cy.get('[data-cy="register-email-input"]').type(emailUnico);
-    cy.get('[data-cy="register-password-input"]').type(senha);
-    cy.get('[data-cy="register-confirm-password-input"]').type(senha);
-    cy.get('[data-cy="register-terms-checkbox"]').check(); 
-    cy.get('[data-cy="register-submit-button"]').click();
-
-    cy.on('window:alert', () => true); // Aceita o alert silenciosamente
-    cy.url().should('include', '/login');
+    cy.cadastrar(nomeUsuario, emailUnico, senha); // Usa o comando customizado para cadastrar
   });
 
   // O bloco 'beforeEach' roda ANTES DE CADA teste 'it'
   // Vamos usar para garantir que começamos o teste já logados e na Home
   beforeEach(() => {
-    cy.visit('/login');
-    cy.get('[data-cy="login-email-input"]').type(emailUnico);
-    cy.get('[data-cy="login-password-input"]').type(senha);
-    cy.get('[data-cy="login-submit-button"]').click();
-    
-    // Garante que o login terminou e estamos na Home
-    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    cy.login(emailUnico, senha); // Usa o comando customizado para logar
   });
 
   it('Deve buscar um anime, abrir os detalhes e publicar um dossiê com sucesso', () => {
     // Definimos o que vamos buscar e o texto da análise (com timestamp para ser único)
-    const termoBusca = 'Hunter x Hunter'; 
+    const termoBusca = 'Hunter x Hunter';
     const textoAnalise = `Automação E2E: Obra-prima absoluta! Validado em ${Date.now()}`;
 
     // ==========================================
