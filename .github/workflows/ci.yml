@@ -28,7 +28,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: 🔍 Executar testes da API
-        run: npm test
+        run: npm run test:api
 
   testes-web:
     name: 🔵 Testes de Front-end (Cypress)
@@ -43,9 +43,6 @@ jobs:
         with:
           node-version: "20"
 
-      # NOTA TÉCNICA: Se os seus testes do Cypress precisarem da API real rodando 
-      # para fazer login, descomente o bloco abaixo para ligar o servidor da API em background!
-      #
       - name: 🚀 Iniciar API em Background
         working-directory: ./api
         run: |
@@ -57,5 +54,6 @@ jobs:
         with:
           working-directory: ./web
           build: npm run build
-          start: npm run dev
-          wait-on: "http://localhost:5173"
+          start: npm run preview
+          # Aguarda a API (3000) e o Front-end de Produção (4173) estarem vivos
+          wait-on: "http://localhost:3000, http://localhost:4173"
