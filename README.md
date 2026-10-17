@@ -110,7 +110,7 @@ VITE_API_URL=http://localhost:3000
 
 ## 📘 Documentação
 
-A documentação completa está disponível na Wiki:
+A documentação do projeto está disponível na Wiki, com o status de cada seção.
 
 👉 https://github.com/HevertonL/dossie-otaku-web/wiki
 
@@ -189,7 +189,7 @@ dossie-otaku-web/
 
 ## 📌 Status
 
-Projeto em desenvolvimento — MVP 1 com cobertura de testes e documentação completa.
+Projeto em desenvolvimento — MVP 1 com testes automatizados e documentação em evolução.
 
 ---
 
