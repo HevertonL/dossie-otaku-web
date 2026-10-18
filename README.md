@@ -123,6 +123,8 @@ Inclui:
 - Matriz de rastreabilidade
 - Definition of Ready / Done
 
+[Consulte as evidências de Engenharia de Qualidade](docs/evidencias-de-qualidade.md): riscos, testes implementados, resultados de execução e melhorias priorizadas.
+
 ---
 
 ## 🧪 Testes
